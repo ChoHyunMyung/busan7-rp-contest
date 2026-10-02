@@ -37,6 +37,14 @@ tr.core td{background:var(--soft)}
 .steps{display:grid;gap:10px;counter-reset:s;padding:0;margin:0;list-style:none}
 .steps li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
 .steps li::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--soft);color:var(--accent-ink);font-weight:700;font-size:14px}
+.up{display:grid;gap:8px;border:1px solid var(--line);border-radius:12px;padding:16px}
+.up label{font-size:14px;font-weight:600}
+.up select,.up input{font:inherit;font-size:16px;padding:11px 12px;border:1px solid #D9D9D9;border-radius:8px;background:#fff;width:100%}
+.up .btn{margin-top:8px;cursor:pointer}
+.up .btn:disabled{opacity:.5}
+.bar2{height:12px;background:#F1F1F1;border-radius:6px;overflow:hidden}
+#u-bar{height:100%;width:0;background:var(--accent);transition:width .3s}
+.ok{color:#1D7A52;font-weight:700}.err{color:#B42318;font-weight:700}
 .fig{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
 .fig svg{width:100%;height:auto;display:block}
 .cap{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted);margin-top:8px}
@@ -67,23 +75,35 @@ a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </section>
 
 <section>
-  <h2><span class="n">2</span>영상과 스크립트 올리기</h2>
-  <div class="grid2">
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1g8kdNNlOXCmv_B8aFYeGXQK3SXNByxqE" target="_blank" rel="noopener">OCEAN 지점 폴더</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1mwyySKMXcQ-_VtMmzvrFVRzFASBpAjaB" target="_blank" rel="noopener">THE STAR 지점 폴더</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1sbhlPS4NPj83ljNGKAVGcpv8zm5yGDrU" target="_blank" rel="noopener">울산 지점 폴더</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1BlcNyphZvkUHLiPRkL_D2AZW3iU5oGTP" target="_blank" rel="noopener">WHALE 지점 폴더</a>
+  <h2><span class="n">2</span>영상과 스크립트 올리기 (로그인 없음)</h2>
+  <div class="up" id="up">
+    <label for="u-branch">지점</label>
+    <select id="u-branch"><option value="">지점 선택</option><option>OCEAN</option><option>THE STAR</option><option>울산</option><option>WHALE</option></select>
+    <label for="u-fm">FM 이름</label>
+    <select id="u-fm" disabled><option value="">지점을 먼저 선택</option></select>
+    <label for="u-video">RP 영상</label>
+    <input type="file" id="u-video" accept="video/*">
+    <label for="u-script">스크립트 워드 파일</label>
+    <input type="file" id="u-script" accept=".doc,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    <button class="btn" id="u-go" type="button">올리기</button>
+    <div class="bar2" hidden id="u-barwrap"><div id="u-bar"></div></div>
+    <p class="note" id="u-msg" role="status"></p>
   </div>
-  <p class="note">휴대폰 Google Drive 앱에서 본인 지점 폴더를 열고 영상과 스크립트를 올립니다. 파일 이름은 지점_FM이름_직군_PSP성향 (예: 울산_홍길동_간호사_역동형D). 올린 파일의 공유 링크를 복사해 둡니다.</p>
+  <p class="note">휴대폰 갤러리에서 영상을 고르고 올리기를 누르면 지점 폴더에 자동으로 저장됩니다. 올리는 동안 화면을 끄지 마세요. 와이파이에서 올리면 빠릅니다.</p>
 </section>
 
 <section>
-  <h2><span class="n">3</span>제출과 심사</h2>
-  <div class="stack">
-    <a class="btn" id="form-submit" href="#">영상 제출 폼</a>
-    <a class="btn ghost" id="form-judge" href="#">심사 폼</a>
+  <h2><span class="n">3</span>영상 보기와 심사</h2>
+  <div class="grid2">
+    <a class="btn ghost" href="https://drive.google.com/drive/folders/1g8kdNNlOXCmv_B8aFYeGXQK3SXNByxqE" target="_blank" rel="noopener">OCEAN 영상</a>
+    <a class="btn ghost" href="https://drive.google.com/drive/folders/1mwyySKMXcQ-_VtMmzvrFVRzFASBpAjaB" target="_blank" rel="noopener">THE STAR 영상</a>
+    <a class="btn ghost" href="https://drive.google.com/drive/folders/1sbhlPS4NPj83ljNGKAVGcpv8zm5yGDrU" target="_blank" rel="noopener">울산 영상</a>
+    <a class="btn ghost" href="https://drive.google.com/drive/folders/1BlcNyphZvkUHLiPRkL_D2AZW3iU5oGTP" target="_blank" rel="noopener">WHALE 영상</a>
   </div>
-  <p class="note">영상 제출 폼에서 지점을 고르면 그 지점 FM 이름만 나옵니다. 심사 폼은 영상 한 편마다 한 번씩 제출하며, 본인 영상은 심사하지 않습니다. 같은 영상을 다시 제출하면 마지막 점수로 집계됩니다.</p>
+  <div class="stack" style="margin-top:10px">
+    <a class="btn" id="form-judge" href="#">심사 폼</a>
+  </div>
+  <p class="note">영상 폴더는 로그인 없이 열립니다. 위쪽 로그인 버튼은 누르지 않아도 됩니다. 심사 폼에서 본인 이름을 체크한 뒤 FM 한 명씩 7개 항목을 심사하고 마지막에 한 번 제출합니다. 본인 차례는 비워 두고 넘어갑니다.</p>
 </section>
 
 <section>
@@ -157,12 +177,51 @@ a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 <footer>조현명 지점장 / MetLife 부산7본부 울산지점</footer>
 </main>
 <script>
-// 구글폼 링크: setup 실행 후 여기에 붙여 넣으면 버튼이 켜집니다.
-const FORMS = { submit: '', judge: '' };
-[['form-submit', FORMS.submit], ['form-judge', FORMS.judge]].forEach(([id, url]) => {
-  const a = document.getElementById(id);
-  if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
-  else { a.classList.add('off'); a.textContent += ' (링크 준비 중)'; a.removeAttribute('href'); }
+// 업로드 서버 주소(구글 Apps Script 웹 앱)와 심사 폼 주소
+const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbxP5YgNy1ORYB_QbAA-Iv4t3M0-bu4J7u5kzCwMEiYdj0vTIrUFgp2cRrl8J4ReWLbS/exec';
+const FORMS = { judge: 'https://docs.google.com/forms/d/e/1FAIpQLSdKEoGriqqosjp__YcxNzFzCiTWEWbEZ-GAcfZoAdeeufrhfw/viewform' };
+const FMS = { 'OCEAN': ['김소은','구현모','배광호','오정택'], 'THE STAR': ['배혜정','신환석','이광태','이원재'], '울산': ['엄선희'], 'WHALE': ['박희향','김태의'] };
+const $ = id => document.getElementById(id);
+(() => { const a = $('form-judge'); if (FORMS.judge) { a.href = FORMS.judge; a.target = '_blank'; a.rel = 'noopener'; } else { a.classList.add('off'); a.textContent += ' (링크 준비 중)'; a.removeAttribute('href'); } })();
+$('u-branch').addEventListener('change', e => {
+  const b = e.target.value, sel = $('u-fm');
+  sel.innerHTML = b ? '<option value="">이름 선택</option>' + FMS[b].map(n => `<option>${n}</option>`).join('') : '<option value="">지점을 먼저 선택</option>';
+  sel.disabled = !b;
+});
+function msg(t, cls) { const m = $('u-msg'); m.textContent = t; m.className = 'note ' + (cls || ''); }
+async function sendOne(file, kind, label, base, share) {
+  const r = await fetch(UPLOAD_URL, { method: 'POST', body: JSON.stringify({ branch: $('u-branch').value, fm: $('u-fm').value, kind, filename: file.name, mimeType: file.type || 'application/octet-stream', size: file.size, origin: location.origin }) });
+  const meta = await r.json();
+  if (!meta.ok) throw new Error(meta.error || '업로드 준비 실패');
+  const CH = 8 * 1024 * 1024; let start = 0;
+  while (start < file.size) {
+    const end = Math.min(start + CH, file.size);
+    let res, tries = 0;
+    while (true) {
+      try { res = await fetch(meta.url, { method: 'PUT', headers: { 'Content-Range': `bytes ${start}-${end - 1}/${file.size}` }, body: file.slice(start, end) }); break; }
+      catch (e) { if (++tries > 3) throw new Error('인터넷 연결이 끊겼습니다. 다시 올려 주세요.'); await new Promise(z => setTimeout(z, 2000 * tries)); }
+    }
+    if (res.status !== 308 && !res.ok) throw new Error('업로드 실패 (' + res.status + ')');
+    start = end;
+    const pct = Math.round((base + share * start / file.size) * 100);
+    $('u-bar').style.width = pct + '%'; msg(label + ' 올리는 중 ' + pct + '%');
+    if (res.ok) break;
+  }
+}
+$('u-go').addEventListener('click', async () => {
+  const v = $('u-video').files[0], sc = $('u-script').files[0];
+  if (!UPLOAD_URL) return msg('업로드 준비 중입니다. 잠시 후 다시 열어 주세요.', 'err');
+  if (!$('u-branch').value || !$('u-fm').value) return msg('지점과 이름을 고르세요.', 'err');
+  if (!v && !sc) return msg('영상이나 스크립트 파일을 고르세요.', 'err');
+  $('u-go').disabled = true; $('u-barwrap').hidden = false; $('u-bar').style.width = '0';
+  try {
+    const vs = v ? v.size : 0, ss = sc ? sc.size : 0, tot = vs + ss;
+    if (v) await sendOne(v, 'video', '영상', 0, vs / tot);
+    if (sc) await sendOne(sc, 'script', '스크립트', vs / tot, ss / tot);
+    $('u-bar').style.width = '100%';
+    msg('올리기 완료. ' + $('u-branch').value + ' ' + $('u-fm').value + ' FM 파일이 지점 폴더에 저장되었습니다.', 'ok');
+  } catch (e) { msg(e.message || '업로드 실패. 다시 눌러 주세요.', 'err'); }
+  finally { $('u-go').disabled = false; }
 });
 </script>
 </body>
