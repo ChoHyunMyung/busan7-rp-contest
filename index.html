@@ -45,6 +45,10 @@ tr.core td{background:var(--soft)}
 .bar2{height:12px;background:#F1F1F1;border-radius:6px;overflow:hidden}
 #u-bar{height:100%;width:0;background:var(--accent);transition:width .3s}
 .ok{color:#1D7A52;font-weight:700}.err{color:#B42318;font-weight:700}
+.vlist{display:grid;gap:14px}
+.vgroup h3{font-size:15px;margin:0 0 6px;color:var(--accent-ink)}
+.vgroup a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:6px;font-size:15px}
+.vgroup a span{color:var(--accent-ink);font-weight:700;white-space:nowrap}
 .fig{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
 .fig svg{width:100%;height:auto;display:block}
 .cap{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted);margin-top:8px}
@@ -94,16 +98,11 @@ a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 <section>
   <h2><span class="n">3</span>영상 보기와 심사</h2>
-  <div class="grid2">
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1g8kdNNlOXCmv_B8aFYeGXQK3SXNByxqE" target="_blank" rel="noopener">OCEAN 영상</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1mwyySKMXcQ-_VtMmzvrFVRzFASBpAjaB" target="_blank" rel="noopener">THE STAR 영상</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1sbhlPS4NPj83ljNGKAVGcpv8zm5yGDrU" target="_blank" rel="noopener">울산 영상</a>
-    <a class="btn ghost" href="https://drive.google.com/drive/folders/1BlcNyphZvkUHLiPRkL_D2AZW3iU5oGTP" target="_blank" rel="noopener">WHALE 영상</a>
-  </div>
+  <div id="vlist" class="vlist"><p class="note">올라온 영상을 불러오는 중입니다.</p></div>
   <div class="stack" style="margin-top:10px">
     <a class="btn" id="form-judge" href="#">심사 폼</a>
   </div>
-  <p class="note">영상 폴더는 로그인 없이 열립니다. 위쪽 로그인 버튼은 누르지 않아도 됩니다. 심사 폼에서 본인 이름을 체크한 뒤 FM 한 명씩 7개 항목을 심사하고 마지막에 한 번 제출합니다. 본인 차례는 비워 두고 넘어갑니다.</p>
+  <p class="note">영상 이름을 누르면 로그인 없이 바로 재생됩니다. 심사 폼에서 본인 이름을 체크한 뒤 FM 한 명씩 7개 항목을 심사하고 마지막에 한 번 제출합니다. 본인 차례는 비워 두고 넘어갑니다.</p>
 </section>
 
 <section>
@@ -183,6 +182,21 @@ const FORMS = { judge: 'https://docs.google.com/forms/d/e/1FAIpQLSdKEoGriqqosjp_
 const FMS = { 'OCEAN': ['김소은','구현모','배광호','오정택'], 'THE STAR': ['배혜정','신환석','이광태','이원재'], '울산': ['엄선희'], 'WHALE': ['박희향','김태의'] };
 const $ = id => document.getElementById(id);
 (() => { const a = $('form-judge'); if (FORMS.judge) { a.href = FORMS.judge; a.target = '_blank'; a.rel = 'noopener'; } else { a.classList.add('off'); a.textContent += ' (링크 준비 중)'; a.removeAttribute('href'); } })();
+async function loadVideos() {
+  const box = $('vlist');
+  if (!UPLOAD_URL) { box.innerHTML = '<p class="note">영상 목록 준비 중입니다.</p>'; return; }
+  try {
+    const r = await fetch(UPLOAD_URL + '?list=1'); const d = await r.json();
+    const files = (d.files || []).filter(f => f.video);
+    if (!files.length) { box.innerHTML = '<p class="note">아직 올라온 영상이 없습니다.</p>'; return; }
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    box.innerHTML = Object.keys(FMS).map(b => {
+      const fs = files.filter(f => f.branch === b); if (!fs.length) return '';
+      return '<div class="vgroup"><h3>' + b + '</h3>' + fs.map(f => '<a href="' + f.url + '" target="_blank" rel="noopener">' + esc(f.name.replace(/\.[^.]+$/, '')) + '<span>재생</span></a>').join('') + '</div>';
+    }).join('');
+  } catch (e) { box.innerHTML = '<p class="note">영상 목록을 불러오지 못했습니다. 새로고침해 주세요.</p>'; }
+}
+loadVideos();
 $('u-branch').addEventListener('change', e => {
   const b = e.target.value, sel = $('u-fm');
   sel.innerHTML = b ? '<option value="">이름 선택</option>' + FMS[b].map(n => `<option>${n}</option>`).join('') : '<option value="">지점을 먼저 선택</option>';
@@ -219,6 +233,7 @@ $('u-go').addEventListener('click', async () => {
     if (v) await sendOne(v, 'video', '영상', 0, vs / tot);
     if (sc) await sendOne(sc, 'script', '스크립트', vs / tot, ss / tot);
     $('u-bar').style.width = '100%';
+    loadVideos();
     msg('올리기 완료. ' + $('u-branch').value + ' ' + $('u-fm').value + ' FM 파일이 지점 폴더에 저장되었습니다.', 'ok');
   } catch (e) { msg(e.message || '업로드 실패. 다시 눌러 주세요.', 'err'); }
   finally { $('u-go').disabled = false; }
